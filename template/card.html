@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>card</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@600;800&family=IBM+Plex+Sans+KR:wght@400;500;700&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@500;600&display=block">
+<style>
+/* ===== 여권영어 카드 시스템 v1 · 캔버스 1080×1350 (4:5) =====
+   타입 스케일(px): 커버훅 100 / 제목 64 / 영어메인 84 / 영어(들리는 말) 50 / 한글뜻 46 / 발음 44 / 본문 42 / 라벨 26
+   여백: 좌우 96 · 상하 88  (3:4 그리드 크롭 시 좌우 약 34px 잘림 → 96이면 안전) */
+:root{
+  --paper:#EEF0EC;      /* 탑승권 종이 */
+  --ticket:#FFFFFF;
+  --ink:#121A26;        /* 본문 잉크 (paper 대비 15:1) */
+  --ink2:#3B4757;       /* 보조 잉크 (발음·설명, 대비 8:1) */
+  --line:#C9CEC8;
+  --accent:#E8541C;     /* 탑승권 오렌지: 강세·핵심만 */
+  --accent-soft:#FBE3D6;
+  --k-display:"Hahmlet","Noto Serif KR",serif;
+  --k-body:"IBM Plex Sans KR","Noto Sans KR","Malgun Gothic",sans-serif;
+  --en:"Atkinson Hyperlegible","Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono","IBM Plex Sans KR",Consolas,monospace; /* 한글은 Plex Sans KR로 자동 대체 */
+  --side:96px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1350px;overflow:hidden}
+body{background:var(--paper);color:var(--ink);font-family:var(--k-body);word-break:keep-all;-webkit-font-smoothing:antialiased;position:relative}
+.slide{position:absolute;inset:0;padding:88px var(--side);display:flex;flex-direction:column}
+
+/* 공통 머리·꼬리 */
+.top{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:26px;font-weight:600;letter-spacing:.08em;color:var(--ink2)}
+.top .brand{display:flex;gap:14px;align-items:center;font-family:var(--k-display);font-weight:800;font-size:32px;letter-spacing:-.01em;color:var(--ink)}
+.top .brand i{display:inline-block;width:18px;height:18px;border-radius:50%;background:var(--accent)}
+.foot{margin-top:auto;display:flex;justify-content:space-between;font-family:var(--mono);font-size:26px;letter-spacing:.02em;color:var(--ink2)}
+.body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:40px;padding-block:40px}
+
+/* 텍스트 역할 */
+.label{font-family:var(--mono);font-size:28px;font-weight:600;letter-spacing:.04em;color:var(--accent);text-transform:uppercase}
+.h{font-family:var(--k-display);font-weight:800;font-size:64px;line-height:1.3;letter-spacing:-.025em}
+.ko{font-size:46px;line-height:1.5;letter-spacing:-.01em;font-weight:500}
+.txt{font-size:42px;line-height:1.6;letter-spacing:-.01em;color:var(--ink2)}
+.txt b{color:var(--ink);font-weight:700}
+.en{font-family:var(--en);font-weight:700;font-size:84px;line-height:1.18;letter-spacing:-.005em}
+.sl{color:var(--line);font-weight:400;margin:0 .12em}
+.en.long{font-size:68px;line-height:1.22}
+.ck{white-space:nowrap}
+.row .e.sm{font-size:42px}
+.txt b.st{color:var(--accent)}
+.en-s{font-family:var(--en);font-weight:400;font-size:50px;line-height:1.3}
+.pr{font-size:44px;line-height:1.4;color:var(--ink2);font-weight:500;letter-spacing:.01em}
+.pr b{color:var(--accent);font-weight:700}
+.pr::before{content:"발음";font-family:var(--k-body);font-weight:500;font-size:26px;letter-spacing:0;color:var(--ink2);vertical-align:6px;margin-right:10px}
+
+/* 커버: 탑승권 */
+.ticket{background:var(--ticket);border-radius:28px;flex:1;margin-top:40px;display:flex;flex-direction:column;position:relative;box-shadow:0 2px 0 var(--line)}
+.ticket .main{flex:1;padding:64px 64px 48px;display:flex;flex-direction:column;justify-content:center;gap:32px}
+.hook{font-family:var(--k-display);font-weight:800;font-size:100px;line-height:1.22;letter-spacing:-.035em}
+.hook em{font-style:normal;color:var(--accent)}
+.sub{font-size:42px;line-height:1.5;color:var(--ink2);letter-spacing:-.01em}
+.perf{position:relative;height:0;border-top:4px dashed var(--line);margin:0 40px}
+.perf::before,.perf::after{content:"";position:absolute;top:-30px;width:56px;height:56px;border-radius:50%;background:var(--paper)}
+.perf::before{left:-70px}.perf::after{right:-70px}
+.stub{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:20px;padding:40px 64px 52px}
+.stub div{display:flex;flex-direction:column;gap:6px}
+.stub small{font-family:var(--mono);font-size:24px;letter-spacing:.1em;color:var(--ink2)}
+.stub strong{font-size:40px;font-weight:700;letter-spacing:-.01em}
+
+/* 표현 카드 */
+.heard{border-left:8px solid var(--line);padding-left:32px;display:flex;flex-direction:column;gap:10px}
+.heard .ko{color:var(--ink2);font-size:42px}
+.answer{background:var(--ticket);border-radius:24px;padding:52px 56px;display:flex;flex-direction:column;gap:22px}
+.tip{display:flex;gap:20px;align-items:flex-start}
+.tip .label{padding-top:12px;white-space:nowrap}
+
+/* 정리 카드 */
+.list{background:var(--ticket);border-radius:24px;padding:20px 48px}
+.row{display:grid;grid-template-columns:64px 1fr;gap:12px;padding:26px 0;border-bottom:3px solid var(--paper)}
+.row:last-child{border-bottom:0}
+.row .n{font-family:var(--mono);font-size:30px;font-weight:600;color:var(--accent);padding-top:6px}
+.row .e{font-family:var(--en);font-weight:700;font-size:50px;line-height:1.2}
+.row .k{font-size:36px;color:var(--ink2);line-height:1.45;margin-top:4px}
+
+/* 보여주기 카드 */
+.show{background:#fff}
+.show .bar{background:var(--ink);color:#fff;margin:-88px calc(var(--side) * -1) 0;padding:44px var(--side);display:flex;justify-content:space-between;align-items:center}
+.show .bar span{font-family:var(--mono);font-size:30px;font-weight:600;letter-spacing:.12em}
+.show .bar small{font-size:34px}
+.show .big{font-family:var(--en);font-weight:700;font-size:104px;line-height:1.15;letter-spacing:-.01em}
+.show .ko{color:var(--ink2)}
+.show .big em{font-style:normal;color:var(--accent)}
+
+/* CTA */
+.cta .hook{font-size:88px}
+.steps{display:flex;flex-direction:column;gap:22px}
+.step{display:flex;gap:24px;align-items:baseline;font-size:46px;line-height:1.45;letter-spacing:-.015em}
+.step .n{font-family:var(--mono);font-size:30px;font-weight:600;color:#fff;background:var(--accent);border-radius:999px;min-width:60px;height:60px;display:inline-flex;align-items:center;justify-content:center;transform:translateY(-6px)}
+.stamp{align-self:flex-start;border:5px solid var(--accent);color:var(--accent);border-radius:16px;padding:14px 26px;font-family:var(--mono);font-weight:600;font-size:30px;letter-spacing:.1em;transform:rotate(-4deg)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const q=new URLSearchParams(location.search);
+const postId=q.get("post")||"d01";
+const n=parseInt(q.get("n")||"1",10);
+document.write('<script src="../posts/'+postId+'.js"><\/script>');
+</script>
+<script>
+(function(){
+  const P=window.POST, s=P.slides[n-1], total=P.slides.length;
+  const esc=t=>String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  // {강세} → <b>, 영어 " / " → 끊어 읽기 표시, *강조* → <em>, \n → 줄바꿈
+  const pr=t=>esc(t).replace(/\{(.+?)\}/g,"<b>$1</b>");
+  // 끊어 읽기 단위(chunk)는 줄바꿈되지 않게 묶음 → 줄은 "/" 자리에서만 넘어감
+  const en=t=>esc(t).split(" / ").map(c=>`<span class="ck">${c}</span>`).join(' <span class="sl">/</span> ');
+  const rich=t=>esc(t).replace(/\*(.+?)\*/g,"<em>$1</em>").replace(/\n/g,"<br>");
+  const bold=t=>esc(t).replace(/\*(.+?)\*/g,"<b>$1</b>").replace(/\{(.+?)\}/g,'<b class="st">$1</b>').replace(/\n/g,"<br>");
+  // 영어 메인 문장이 17자를 넘으면 한 단계 작게(84→68px) → 한 단어만 다음 줄로 떨어지는 것 방지
+  const enCls=t=>t.replace(/ \/ /g," ").length>16?"en long":"en";
+  const num=String(n).padStart(2,"0")+" / "+String(total).padStart(2,"0");
+  const top=`<div class="top"><span class="brand"><i></i>${esc(P.brand)}</span><span>${esc(P.code)} · ${num}</span></div>`;
+  const foot=`<div class="foot"><span>${esc(P.handle)}</span><span>${esc(P.series)}</span></div>`;
+  let h="";
+  if(s.type==="cover"){
+    h=`<div class="slide">${top}
+      <div class="ticket"><div class="main">
+        <span class="label">${esc(s.label)}</span>
+        <div class="hook">${rich(s.hook)}</div>
+        <div class="sub">${bold(s.sub)}</div></div>
+        <div class="perf"></div>
+        <div class="stub">${s.stub.map(([k,v])=>`<div><small>${esc(k)}</small><strong>${esc(v)}</strong></div>`).join("")}</div>
+      </div></div>`;
+  }else if(s.type==="intro"){
+    h=`<div class="slide">${top}<div class="body">
+      <span class="label">${esc(s.label)}</span>
+      <div class="h">${rich(s.title)}</div>
+      <div class="txt">${bold(s.text)}</div></div>${foot}</div>`;
+  }else if(s.type==="expr"){
+    h=`<div class="slide">${top}<div class="body">
+      <span class="label">${esc(s.label)}</span>
+      ${s.heard?`<div class="heard"><div class="en-s">${en(s.heard)}</div><div class="ko">${esc(s.heardKo)}</div></div>`:""}
+      <div class="answer">
+        <div class="${enCls(s.en)}">${en(s.en)}</div>
+        <div class="pr">${pr(s.pr)}</div>
+        <div class="ko">${esc(s.ko)}</div>
+      </div>
+      ${s.tip?`<div class="tip"><span class="label">TIP</span><div class="txt">${bold(s.tip)}</div></div>`:""}
+      </div>${foot}</div>`;
+  }else if(s.type==="summary"){
+    h=`<div class="slide">${top}<div class="body" style="gap:32px">
+      <div class="h">${rich(s.title)}</div>
+      <div class="list">${s.rows.map((r,i)=>`<div class="row"><span class="n">${String(i+1).padStart(2,"0")}</span><div><div class="e${r[0].length>24?" sm":""}">${esc(r[0])}</div><div class="k">${esc(r[1])}</div></div></div>`).join("")}</div>
+      </div>${foot}</div>`;
+  }else if(s.type==="show"){
+    h=`<div class="slide show"><div class="bar"><span>SHOW THIS SCREEN</span><small>직원에게 이 화면을 보여주세요</small></div>
+      <div class="body"><div class="big" style="font-size:${(()=>{const m=Math.max(...s.big.replace(/\*/g,"").split("\n").map(l=>l.length));return m>16?76:m>13?88:104})()}px">${rich(s.big)}</div><div class="ko">${esc(s.ko)}</div></div>${foot}</div>`;
+  }else if(s.type==="cta"){
+    h=`<div class="slide cta">${top}<div class="body">
+      <div class="stamp">${esc(s.stamp)}</div>
+      <div class="hook">${rich(s.title)}</div>
+      <div class="steps">${s.steps.map((t,i)=>`<div class="step"><span class="n">${i+1}</span><span>${bold(t)}</span></div>`).join("")}</div>
+      </div>${foot}</div>`;
+  }
+  document.getElementById("root").innerHTML=h;
+})();
+</script>
+</body>
+</html>

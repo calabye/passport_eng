@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<style>
+/* 인스타 프로필처럼 원형으로 잘라 큰 크기·실제 크기(150px·56px)로 비교. ?set=a,b,c 로 고를 안 지정 */
+body{margin:0;width:1440px;height:560px;background:#fff;font-family:"Malgun Gothic",sans-serif;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;align-items:center;justify-items:center}
+.c{display:grid;gap:24px;justify-items:center}
+.row{display:flex;gap:28px;align-items:center}
+img{border-radius:50%;display:block}
+.big{width:300px;height:300px}.mid{width:150px;height:150px}.sm{width:56px;height:56px}
+p{margin:0;font-size:28px;color:#121A26}
+</style></head><body>
+<script>
+const names={ticket:"1 탑승권",bubble:"2 말풍선 비행",stamp:"3 출입국 도장",window:"4 비행기 창문",tag:"5 짐 꼬리표",flap:"6 출발 안내판",phone:"7 보여주는 화면"};
+const set=(new URLSearchParams(location.search).get("set")||"window,tag,flap,phone").split(",");
+document.body.innerHTML=set.map(k=>{const s=`../out/profile/profile-${k}.png`;return `<div class="c"><img class="big" src="${s}"><div class="row"><img class="mid" src="${s}"><img class="sm" src="${s}"></div><p>${names[k]}</p></div>`}).join("");
+</script>
+</body></html>

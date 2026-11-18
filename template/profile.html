@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<style>
+/* 프로필 사진 1080×1080, 글자 없는 심볼형. 인스타는 원형으로 잘라 약 110px로 보여주므로 형태는 원 안쪽 65%에만 둠 */
+*{margin:0;padding:0}
+html,body{width:1080px;height:1080px;overflow:hidden}
+svg{display:block}
+</style></head>
+<body>
+<script>
+const INK="#121A26", PAPER="#EEF0EC", OR="#E8541C", W="#FFFFFF";
+const v=new URLSearchParams(location.search).get("v")||"ticket";
+const art={
+  // 1. 탑승권 조각: 남색 바탕에 기울어진 흰 티켓, 절취선, 주황 점
+  ticket:`<rect width="1080" height="1080" fill="${INK}"/>
+    <g transform="rotate(-10 540 540)">
+      <rect x="230" y="370" width="620" height="340" rx="40" fill="${W}"/>
+      <circle cx="230" cy="540" r="52" fill="${INK}"/><circle cx="850" cy="540" r="52" fill="${INK}"/>
+      <line x1="640" y1="405" x2="640" y2="675" stroke="${INK}" stroke-opacity=".25" stroke-width="10" stroke-dasharray="22 20" stroke-linecap="round"/>
+      <circle cx="430" cy="540" r="78" fill="${OR}"/>
+      <rect x="700" y="490" width="80" height="18" rx="9" fill="${INK}" opacity=".85"/>
+      <rect x="700" y="530" width="56" height="18" rx="9" fill="${INK}" opacity=".35"/>
+      <rect x="700" y="570" width="68" height="18" rx="9" fill="${INK}" opacity=".35"/>
+    </g>`,
+  // 2. 말풍선 + 비행 경로: 말하기와 여행을 한 그림에
+  bubble:`<rect width="1080" height="1080" fill="${PAPER}"/>
+    <path d="M300 330 h480 a70 70 0 0 1 70 70 v230 a70 70 0 0 1 -70 70 h-250 l-110 100 v-100 h-120 a70 70 0 0 1 -70 -70 v-230 a70 70 0 0 1 70 -70z" fill="${INK}"/>
+    <path d="M330 600 Q540 380 760 470" fill="none" stroke="${OR}" stroke-width="22" stroke-dasharray="4 40" stroke-linecap="round"/>
+    <circle cx="330" cy="600" r="26" fill="${W}"/>
+    <g transform="translate(770 468) rotate(22)"><path d="M-46 -30 L46 0 L-46 30 L-26 0 Z" fill="${OR}"/></g>`,
+  // 4. 비행기 창문: 창밖으로 지는 해
+  window:`<rect width="1080" height="1080" fill="${PAPER}"/><g transform="translate(540 540) scale(1.22) translate(-540 -540)">
+    <rect x="340" y="250" width="400" height="580" rx="200" fill="${INK}"/>
+    <clipPath id="w"><rect x="390" y="300" width="300" height="480" rx="150"/></clipPath>
+    <g clip-path="url(#w)">
+      <rect x="390" y="300" width="300" height="480" fill="#F6D9C8"/>
+      <circle cx="540" cy="600" r="90" fill="${OR}"/>
+      <rect x="390" y="600" width="300" height="200" fill="${W}"/>
+      <rect x="390" y="600" width="300" height="10" fill="${OR}" opacity=".35"/>
+    </g>
+    <rect x="390" y="300" width="300" height="56" fill="${INK}" opacity=".9"/></g>`,
+  // 5. 짐 꼬리표: 구멍 뚫린 태그와 끈
+  tag:`<rect width="1080" height="1080" fill="${INK}"/>
+    <g transform="rotate(14 540 560)">
+      <path d="M300 420 L430 330 H780 a40 40 0 0 1 40 40 V750 a40 40 0 0 1 -40 40 H430 L300 700 Z" fill="${OR}"/>
+      <circle cx="390" cy="560" r="34" fill="${INK}"/>
+      <circle cx="390" cy="560" r="34" fill="none" stroke="${W}" stroke-width="10"/>
+      <rect x="500" y="470" width="240" height="26" rx="13" fill="${W}"/>
+      <rect x="500" y="540" width="180" height="26" rx="13" fill="${W}" opacity=".7"/>
+      <rect x="500" y="610" width="210" height="26" rx="13" fill="${W}" opacity=".7"/>
+    </g>
+    <path d="M345 470 C 250 380, 230 280, 300 220" fill="none" stroke="${W}" stroke-width="12" stroke-linecap="round"/>`,
+  // 6. 출발 안내판 한 칸(스플릿 플랩): 공항 전광판의 넘어가는 글자판
+  flap:`<rect width="1080" height="1080" fill="${OR}"/>
+    <rect x="330" y="290" width="420" height="500" rx="36" fill="${INK}"/>
+    <rect x="330" y="530" width="420" height="20" fill="${OR}"/>
+    <circle cx="330" cy="540" r="16" fill="${OR}"/><circle cx="750" cy="540" r="16" fill="${OR}"/>
+    <path d="M440 470 L540 380 L640 470" fill="none" stroke="${W}" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="440" y="610" width="200" height="44" rx="22" fill="${W}" opacity=".55"/>`,
+  // 7. 보여주는 화면: 휴대폰 화면을 내미는 장면 (SHOW THIS SCREEN 카드에서)
+  phone:`<rect width="1080" height="1080" fill="${PAPER}"/>
+    <g transform="translate(540 540) scale(1.2) translate(-540 -540) rotate(-8 540 540)">
+      <rect x="385" y="250" width="310" height="580" rx="48" fill="${INK}"/>
+      <rect x="410" y="300" width="260" height="470" rx="18" fill="${W}"/>
+      <rect x="410" y="300" width="260" height="70" rx="18" fill="${INK}" opacity=".9"/>
+      <rect x="440" y="430" width="200" height="30" rx="15" fill="${INK}"/>
+      <rect x="440" y="490" width="150" height="30" rx="15" fill="${INK}"/>
+      <rect x="440" y="550" width="110" height="30" rx="15" fill="${OR}"/>
+    </g>`,
+  // 3. 출입국 도장: 주황 바탕에 기울어진 흰 도장, 출발점 → 도착점
+  stamp:`<rect width="1080" height="1080" fill="${OR}"/>
+    <g transform="rotate(-12 540 540)">
+      <rect x="260" y="370" width="560" height="340" rx="46" fill="none" stroke="${W}" stroke-width="22"/>
+      <rect x="300" y="410" width="480" height="260" rx="26" fill="none" stroke="${W}" stroke-width="7" stroke-dasharray="18 16"/>
+      <circle cx="400" cy="540" r="40" fill="none" stroke="${W}" stroke-width="18"/>
+      <line x1="470" y1="540" x2="640" y2="540" stroke="${W}" stroke-width="18" stroke-linecap="round"/>
+      <path d="M612 498 L670 540 L612 582" fill="none" stroke="${W}" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="700" cy="540" r="40" fill="${W}"/>
+    </g>`
+};
+document.body.innerHTML=`<svg width="1080" height="1080" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">${art[v]}</svg>`;
+</script>
+</body></html>

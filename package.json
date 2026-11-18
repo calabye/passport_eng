@@ -1,0 +1,16 @@
+{
+  "name": "passport-english",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render": "node render.mjs",
+    "publish:dry": "node publish.mjs --dry-run",
+    "publish": "node publish.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^23.11.1"
+  }
+}
