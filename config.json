@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "startDate": "2026-11-17",
   "imageBaseUrl": "https://raw.githubusercontent.com/calabye/passport_eng/main/upload",
   "apiVersion": "v22.0"

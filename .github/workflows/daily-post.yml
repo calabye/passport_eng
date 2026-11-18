@@ -1,8 +1,9 @@
 name: daily-post
 
 on:
-  schedule:
-    - cron: "0 3 * * *"   # 매일 12:00 KST (GitHub 사정으로 몇 분~수십 분 늦을 수 있음)
+  # 자동 업로드 보류 중. 다시 쓰려면 아래 두 줄의 # 를 지우고 config.json의 enabled를 true로
+  # schedule:
+  #   - cron: "0 3 * * *"   # 매일 12:00 KST
   workflow_dispatch:
     inputs:
       post:
